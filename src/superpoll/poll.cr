@@ -6,7 +6,7 @@ module Superpoll
     def go
       puts "polling"
       $db.exchanges.each do |exchange|
-        puts exchange
+        orderbook = exchange.poll("BTC", "ETH")
       end
     end
   end

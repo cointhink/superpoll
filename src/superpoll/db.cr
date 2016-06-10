@@ -22,13 +22,13 @@ module Superpoll
     end
 
     def exchanges
-      db.table("exchanges").run(@conn).to_a.map do |result|
+      db.table("exchanges").run(@conn).to_a.compact_map do |result|
         exchange_name = result.as_h["name"].to_s
         case exchange_name
         when "poloniex"
           Exchanges::Poloniex.new
         else
-          puts "unknown exchange"
+          puts "unknown exchange: #{exchange_name}"
         end
       end
     end
