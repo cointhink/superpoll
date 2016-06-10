@@ -1,18 +1,18 @@
 module Superpoll
-  module Config
+  class Config
     @@config_filename = "config.json"
 
-    def self.config; @@config ; end
+    getter :config
 
-    def self.load(dir : String)
+    def initialize(dir : String)
       config_file = File.join(dir, @@config_filename)
 
       if !File.exists?(config_file)
-        json = File.read(config_file+".sample")
+        json = File.read(config_file + ".sample")
         File.write(config_file, json)
       end
 
-      @@config = JSON.parse(File.read(config_file))
+      @config = JSON.parse(File.read(config_file))
     end
   end
 end

@@ -1,11 +1,12 @@
 # local
 require "./src/superpoll"
 
-puts "Starting superpoll #{Superpoll::VERSION}"
-
 basedir = File.dirname(__FILE__)
-Superpoll::Config.load(basedir)
-db = Superpoll::Db.new
+puts "Starting superpoll #{Superpoll::VERSION} in #{basedir}"
+puts
 
-poll = Superpoll::Poll.new(db)
+$config = Superpoll::Config.new(basedir)
+$db = Superpoll::Db.new
+
+poll = Superpoll::Poll.new
 poll.go
