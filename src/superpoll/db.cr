@@ -15,13 +15,16 @@ module Superpoll
     end
 
     def table_ensure(table_name : String)
-      tables = db.table_list.run(@conn)
-      puts tables
+      unless db.table_list.run(@conn).includes?(table_name)
+        puts "Warning: Creating #{table_name}"
+        db.table_create(table_name).run(@conn)
+      end
     end
 
     def exchanges
-      # Exchange.from_json(json)
-      [] of Exchange
+      db.table("exchanges").run(@conn).to_a.map do |result|
+        Exchange.new(name = result.as_h["name"].to_s)
+      end
     end
   end
 end
