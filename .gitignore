@@ -3,4 +3,4 @@
 /.crystal/
 /.shards/
 /shard.lock
-
+/config.json
