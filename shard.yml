@@ -1,0 +1,14 @@
+name: superpoll
+version: 0.1.0
+
+authors:
+  - Don Park <donp@donp.org>
+
+description: |
+  The Exchange Poll Monster
+
+dependencies:
+  rethinkdb-crystal:
+    github: CubosTecnologia/rethinkdb-crystal
+
+license: MIT
