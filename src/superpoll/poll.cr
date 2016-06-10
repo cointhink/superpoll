@@ -1,9 +1,8 @@
 module Superpoll
   class Poll
-    def initialize
-    end
-
     def go
+      puts "polling"
+      puts Config.config
     end
   end
 end
