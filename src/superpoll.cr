@@ -1,4 +1,4 @@
-require "./superpoll/*"
+require "./superpoll/**"
 require "rethinkdb-crystal"
 
 module Superpoll
