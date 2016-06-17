@@ -16,12 +16,15 @@ poll
   .then(poll.exchanges)
   .then(function(cursor){
     cursor.each(function(err, exchange){
-      console.log('ex poll', exchange)
+      console.log('ex poll', exchange.id)
       poll.poll(exchange)
       .then(function(orderbooks){
         orderbooks.forEach(function(orderbook){
           poll.insert(orderbook)
         })
+      })
+      .then(function(){
+        console.log('ex done', exchange.id)
       })
     })
   })
