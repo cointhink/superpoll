@@ -11,4 +11,6 @@ var poll = require('./lib/superpoll.js')
 var hjson = fs.readFileSync('./config.hjson', {encoding: 'utf8'})
 var config = Hjson.parse(hjson)
 
-poll.setup(config)
+poll
+  .setup(config)
+  .then(poll.loop)
