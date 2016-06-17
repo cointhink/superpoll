@@ -2,8 +2,6 @@ module Superpoll
   class Config
     @@config_filename = "config.json"
 
-    getter :config
-
     def initialize(dir : String)
       config_file = File.join(dir, @@config_filename)
 
@@ -13,6 +11,10 @@ module Superpoll
       end
 
       @config = JSON.parse(File.read(config_file))
+    end
+
+    def [](key)
+      @config[key]
     end
   end
 end

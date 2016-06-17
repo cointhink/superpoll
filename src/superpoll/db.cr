@@ -6,7 +6,7 @@ module Superpoll
     @conn : RethinkDB::Connection
 
     def initialize
-      @conn = r.connect(host: $config.config["rethinkdb"]["host"].as_s)
+      @conn = r.connect(host: $config["rethinkdb"]["host"].as_s)
       table_ensure("exchanges")
     end
 
