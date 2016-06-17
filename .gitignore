@@ -1,6 +1,2 @@
-/doc/
-/libs/
-/.crystal/
-/.shards/
-/shard.lock
-/config.json
+/node_modules
+/config.hjson

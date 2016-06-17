@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "rethinkdb": "latest"
+  }
+}
