@@ -17,5 +17,10 @@ poll
     poll.conn = conn
 
     poll.exchanges().
-      then(poll.loop)
+      then(function(cursor){
+        cursor.each(function(err, exchange){
+          console.log('ex poll', exchange)
+          poll.poll(exchange)
+        })
+      })
   })
