@@ -13,4 +13,9 @@ var config = Hjson.parse(hjson)
 
 poll
   .setup(config)
-  .then(poll.loop)
+  .then(function(conn) {
+    poll.conn = conn
+
+    poll.exchanges().
+      then(poll.loop)
+  })
