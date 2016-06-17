@@ -22,10 +22,9 @@ poll
           console.log('ex poll', exchange)
           poll.poll(exchange)
             .then(function(orderbooks){
-              console.log('top level', orderbooks)
               orderbooks.forEach(function(orderbook){
                 orderbook.then(function(ob){
-                  poll.insert(orderbook)
+                  poll.insert(ob)
                 })
               })
             })
