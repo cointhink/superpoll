@@ -21,6 +21,14 @@ poll
         cursor.each(function(err, exchange){
           console.log('ex poll', exchange)
           poll.poll(exchange)
+            .then(function(orderbooks){
+              console.log('top level', orderbooks)
+              orderbooks.forEach(function(orderbook){
+                orderbook.then(function(ob){
+                  poll.insert(orderbook)
+                })
+              })
+            })
         })
       })
   })
