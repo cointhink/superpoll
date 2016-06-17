@@ -13,19 +13,17 @@ var config = Hjson.parse(hjson)
 
 poll
   .setup(config)
-  .then(function(conn) {
-    poll.exchanges().
-      then(function(cursor){
-        cursor.each(function(err, exchange){
-          console.log('ex poll', exchange)
-          poll.poll(exchange)
-            .then(function(orderbooks){
-              orderbooks.forEach(function(orderbook){
-                orderbook.then(function(ob){
-                  poll.insert(ob)
-                })
-              })
+  .then(poll.exchanges)
+  .then(function(cursor){
+    cursor.each(function(err, exchange){
+      console.log('ex poll', exchange)
+      poll.poll(exchange)
+        .then(function(orderbooks){
+          orderbooks.forEach(function(orderbook){
+            orderbook.then(function(ob){
+              poll.insert(ob)
             })
+          })
         })
-      })
+    })
   })
