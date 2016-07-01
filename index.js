@@ -20,6 +20,7 @@ poll
       poll.poll(exchange)
       .then(function(orderbooks){
         orderbooks.forEach(function(orderbook){
+          console.log(orderbook.market)
           poll.insert(orderbook)
         })
       })
