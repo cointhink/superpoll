@@ -16,7 +16,7 @@ poll
   .then(poll.exchanges)
   .then(function(cursor){
     cursor.each(function(err, exchange){
-      console.log('ex poll', exchange.id)
+      console.log('* Start', exchange.id)
       poll.poll(exchange)
       .then(function(orderbooks){
         orderbooks.forEach(function(orderbook){
@@ -24,7 +24,7 @@ poll
         })
       })
       .then(function(){
-        console.log('ex done', exchange.id)
+        console.log('* Finished', exchange.id)
       })
     })
   })
