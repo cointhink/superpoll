@@ -16,23 +16,26 @@ var delay = 60 // seconds between poll
 poll
   .setup(config)
   .then(function(){
-    setInterval(function(){
-      poll
-        .exchanges()
-        .then(function(cursor){
-          cursor.each(function(err, exchange){
-            console.log('* Start', exchange.id)
-            poll.poll(exchange)
-            .then(function(orderbooks){
-              orderbooks.forEach(function(orderbook){
-                console.log(orderbook.market)
-                poll.insert(orderbook)
-              })
-            })
-            .then(function(){
-              console.log('* Finished', exchange.id)
-            })
+    gopoll()
+    setInterval(gopoll, delay * 1000)
+  })
+
+function gopoll(){
+  poll
+    .exchanges()
+    .then(function(cursor){
+      cursor.each(function(err, exchange){
+        console.log('* Start', exchange.id)
+        poll.poll(exchange)
+        .then(function(orderbooks){
+          orderbooks.forEach(function(orderbook){
+            console.log(orderbook.market)
+            poll.insert(orderbook)
           })
         })
-    }, delay * 1000)
-  })
+        .then(function(){
+          console.log('* Finished', exchange.id)
+        })
+      })
+    })
+}
