@@ -36,18 +36,19 @@ function gopoll(){
                        })
              })
     })
-    .then(function(marketInquiries){
-      return Promise.all(marketInquiries)
+    .then(function(exchangeMarketInquiries){
+      return Promise.all(exchangeMarketInquiries)
     })
-    .then(function(markets){
-      console.log(markets)
-      return markets
+    .then(function(exchanges){
+      console.log(exchanges)
+      return exchanges
              .map(function(exchange){
                return exchange
-               .map(function(market){
-                 console.log('poll', market.exchange, market.market)
-                 //return poll.poll(market)
-               })
+                      .orderbooks
+                      .map(function(market){
+                        console.log('poll', market.exchange, market.market)
+                        return poll.poll(exchange, market)
+                      })
              })
     })
     .then(function(orderbooks){
