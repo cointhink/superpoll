@@ -1,3 +1,5 @@
+'use strict'
+
 // node
 var fs = require('fs')
 
@@ -24,18 +26,37 @@ function gopoll(){
   poll
     .exchanges()
     .then(function(cursor){
-      cursor.each(function(err, exchange){
-        console.log('* Start', exchange.id)
-        poll.poll(exchange)
-        .then(function(orderbooks){
-          orderbooks.forEach(function(orderbook){
-            console.log(orderbook.market)
-            poll.insert(orderbook)
-          })
-        })
-        .then(function(){
-          console.log('* Finished', exchange.id)
-        })
-      })
+      return cursor
+             .toArray()
+             .then(function(array){
+               return array
+                      .map(function(exchange){
+                         console.log('* Start', exchange.id)
+                         return poll.marketlist(exchange)
+                       })
+             })
     })
+    .then(function(marketInquiries){
+      return Promise.all(marketInquiries)
+    })
+    .then(function(markets){
+      console.log(markets)
+      return markets
+             .map(function(exchange){
+               return exchange
+               .map(function(market){
+                 console.log('poll', market.exchange, market.market)
+                 //return poll.poll(market)
+               })
+             })
+    })
+    .then(function(orderbooks){
+      console.log('orderbooks', orderbooks)
+      // orderbooks.forEach(
+      //   function(orderbook){
+      //     console.log(orderbook.market)
+      //     poll.insert(orderbook)
+      //   })
+      console.log('* Finished')
+      })
 }
