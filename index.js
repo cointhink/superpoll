@@ -40,29 +40,24 @@ function gopoll(){
       return Promise.all(exchangeMarketInquiries)
     })
     .then(function(exchanges){
-      return exchanges
+      return Promise.all(exchanges
              .map(function(exchange){
                //console.log(JSON.stringify(exchange, 2))
-               return exchange
+               let obpeek= exchange
                       .orderbooks
                       .map(function(market){
-                        console.log('poll', exchange.id, market)
+                        console.log('poll', exchange.id, market.market)
                         return poll.poll(exchange, market)
                       })
-             })
+               return Promise.all(obpeek)
+             }))
     })
     .then(function(orderbooks){
-      return orderbooks.forEach(
+      return orderbooks.map(
         function(orderbook){
-          console.log('orderbook resolve', orderbook.length)
-          return Promise.all(orderbook)
-          .then(function(ob){
-            console.log('alldone. top ob', JSON.stringify(orderbook[0]))
-            //poll.insert(orderbook)
-          }, function(err){ console.log('err', err) })
-        })
+          console.log('orderbook resolve', orderbook[0].exchange,
+                                           orderbook[0].market,
+                                           orderbook[0].asks.length)
       })
-    .then(function(){
-      console.log('* Finished')
     })
 }
