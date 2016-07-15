@@ -54,10 +54,12 @@ function gopoll(){
     })
     .then(function(orderbooks){
       return orderbooks.map(
-        function(orderbook){
-          console.log('orderbook resolve', orderbook[0].exchange,
-                                           orderbook[0].market,
-                                           orderbook[0].asks.length)
+        function(orderbookDeep){
+          let orderbook = orderbookDeep[0] // ?
+          console.log('orderbook resolve', orderbook.exchange,
+                                           orderbook.market,
+                                           orderbook.asks.length)
+          console.log(orderbook)
       })
     })
 }

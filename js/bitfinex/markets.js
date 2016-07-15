@@ -6,7 +6,7 @@ function(body) {
                 base: pair[0],
                 quote: pair[1]
             },
-            url: 'https://api.bitfinex.com/v1/book/' + body[market]
+            url: 'https://api.bitfinex.com/v1/book/' + body[market] + '?limit_bids=50&limit_asks=50'
         }
     })
 }
