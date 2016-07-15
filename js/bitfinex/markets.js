@@ -1,6 +1,6 @@
 function(body) {
     return Object.keys(body).map(function(market) {
-        var pair = [body[market].substr(0, 3), body[market].substr(2, 3)];
+        var pair = [body[market].substr(0, 3), body[market].substr(3, 3)];
         return {
             market: {
                 base: pair[0].toUpperCase(),
