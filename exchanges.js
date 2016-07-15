@@ -13,8 +13,6 @@ var poll = require('./lib/superpoll.js')
 var hjson = fs.readFileSync('./config.hjson', {encoding: 'utf8'})
 var config = Hjson.parse(hjson)
 
-var delay = 60 // seconds between poll
-
 let db = poll.setup(config)
 
 if (process.argv.length == 2) {
