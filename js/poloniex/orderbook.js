@@ -1,0 +1,1 @@
+function(obook){return obook}}
