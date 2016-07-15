@@ -45,21 +45,24 @@ function gopoll(){
                //console.log(JSON.stringify(exchange, 2))
                let obpeek= exchange
                       .orderbooks
-                      .map(function(market){
-                        console.log('poll', exchange.id, market.market)
-                        return poll.poll(exchange, market)
+                      .map(function(orderbook){
+                        console.log('poll', orderbook.exchange, orderbook.market)
+                        return poll.poll(exchange, orderbook)
                       })
                return Promise.all(obpeek)
              }))
     })
-    .then(function(orderbooks){
-      return orderbooks.map(
-        function(orderbookDeep){
-          let orderbook = orderbookDeep[0] // ?
-          console.log('orderbook resolve', orderbook.exchange,
-                                           orderbook.market,
-                                           orderbook.asks.length)
-          console.log(orderbook)
+    .then(function(exchanges){
+      return exchanges.map(
+        function(orderbooks){
+          return orderbooks.map(
+            function(orderbook){
+              console.log('orderbook resolve', orderbook.exchange,
+                                               orderbook.market,
+                                               orderbook.asks[0],
+                                               orderbook.bids[0])
+              poll.insert(orderbook)
+            })
       })
     })
 }
