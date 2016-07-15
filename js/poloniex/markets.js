@@ -5,10 +5,10 @@ function(body) {
         return {
             market: {
                 base: pair[0],
-                quote: pair[1],
-                asks: market.asks,
-                bids: market.bids
-            }
+                quote: pair[1]
+            },
+            asks: market.asks,
+            bids: market.bids
         }
     })
 }

@@ -42,11 +42,11 @@ function gopoll(){
     .then(function(exchanges){
       return exchanges
              .map(function(exchange){
-               console.log(JSON.stringify(exchange, 2))
+               //console.log(JSON.stringify(exchange, 2))
                return exchange
                       .orderbooks
                       .map(function(market){
-                        console.log('poll', exchange.id, market.market)
+                        console.log('poll', exchange.id, market)
                         return poll.poll(exchange, market)
                       })
              })
@@ -57,7 +57,7 @@ function gopoll(){
           console.log('orderbook resolve', orderbook.length)
           return Promise.all(orderbook)
           .then(function(ob){
-            console.log('alldone', orderbook[0])
+            console.log('alldone. top ob', JSON.stringify(orderbook[0]))
             //poll.insert(orderbook)
           }, function(err){ console.log('err', err) })
         })
