@@ -4,8 +4,8 @@ function(body) {
         var pair = name.split('_')
         return {
             market: {
-                base: pair[0].toLowerCase(),
-                quote: pair[1].toLowerCase()
+                base: pair[0],
+                quote: pair[1]
             },
             asks: market.asks,
             bids: market.bids
