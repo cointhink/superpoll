@@ -1,3 +1,3 @@
 function(offer){
-  return {price: offer['price'], quantity: parseFloat(offer['amount'])}
+  return [offer['price'], parseFloat(offer['amount'])]
 }
