@@ -2,10 +2,13 @@ function(body) {
     return Object.keys(body).map(function(name) {
         var market = body[name]
         var pair = name.split('_')
+        var base = pair[1]
+        var quote = pair[0]
+        if(quote === 'USDT') { quote = 'USD' }
         return {
             market: {
-                base: pair[1],
-                quote: pair[0]
+                base: base,
+                quote: quote
             },
             asks: market.asks,
             bids: market.bids
