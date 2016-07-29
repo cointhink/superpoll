@@ -20,17 +20,18 @@ if (process.argv.length == 2) {
   .then(poll.exchanges)
   .then(function(cursor){
     cursor.each(function(err, exchange){
-      console.log(JSON.stringify(exchange))
+      console.log(JSON.stringify(exchange, null ,2))
     })
   })
 } else {
-  console.log('loading', process.argv)
+  let jsName = 'js/'+process.argv[2]+'/'+process.argv[3]+'.js'
+  console.log('loading', jsName)
   db
   .then(function(conn){
     poll.jsput(
       process.argv[2],
       process.argv[3],
-      fs.readFileSync(process.argv[4], {encoding: 'utf8'})
+      fs.readFileSync(jsName, {encoding: 'utf8'})
     )
   })
 }
