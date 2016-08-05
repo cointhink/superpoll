@@ -24,14 +24,20 @@ if (process.argv.length == 2) {
     })
   })
 } else {
-  let jsName = 'js/'+process.argv[2]+'/'+process.argv[3]+'.js'
-  console.log('loading', jsName)
-  db
-  .then(function(conn){
-    poll.jsput(
-      process.argv[2],
-      process.argv[3],
-      fs.readFileSync(jsName, {encoding: 'utf8'})
-    )
-  })
+  fs.readdirSync('js').forEach(
+    function(dirName) {
+      ['markets', 'offer', 'orderbook'].forEach(
+        function(section) {
+          let jsName = 'js/'+dirName+'/'+section+'.js'
+          console.log('loading', jsName)
+          db
+          .then(function(conn){
+            return poll.jsput(
+              dirName,
+              section,
+              fs.readFileSync(jsName, {encoding: 'utf8'})
+            )
+          }, x => console.log(x))
+        })
+    })
 }
