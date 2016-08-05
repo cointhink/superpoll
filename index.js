@@ -37,12 +37,13 @@ function gopoll(){
              })
     })
     .then(function(exchangeMarketInquiries){
+      console.log('Marketlist phase')
       return Promise.all(exchangeMarketInquiries)
     })
     .then(function(exchanges){
-      return Promise.all(exchanges
+      console.log('Orderbook phase')
+      return Promise.all(exchanges.filter(x=>x)
              .map(function(exchange){
-               //console.log(JSON.stringify(exchange, 2))
                let obpeek= exchange
                       .orderbooks
                       .map(function(orderbook){
@@ -51,18 +52,21 @@ function gopoll(){
                       })
                return Promise.all(obpeek)
              }))
-    })
+    }, err => console.log('ophase err', err.message))
     .then(function(exchanges){
+      console.log('Final phase')
       return exchanges.map(
         function(orderbooks){
           return orderbooks.map(
             function(orderbook){
-              console.log('orderbook resolve', orderbook.exchange,
-                                               orderbook.market,
-                                               orderbook.asks[0],
-                                               orderbook.bids[0])
+              console.log(
+                          orderbook.exchange,
+                          orderbook.market,
+                          'orderbook head',
+                          orderbook.asks[0],
+                          orderbook.bids[0])
               poll.insert(orderbook)
             })
       })
-    })
+    }, err => console.log(err.message))
 }
