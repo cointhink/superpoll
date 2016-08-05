@@ -52,12 +52,12 @@ function gopoll(){
                       })
                return Promise.all(obpeek)
              }))
-    }, err => console.log('ophase err', err.message))
+    }, err => console.log('Marketlist phase err', err.message))
     .then(function(exchanges){
       console.log('Final phase')
       return exchanges.map(
         function(orderbooks){
-          return orderbooks.map(
+          return orderbooks.filter(x=>x).map(
             function(orderbook){
               console.log(
                           orderbook.exchange,
@@ -68,5 +68,5 @@ function gopoll(){
               poll.insert(orderbook)
             })
       })
-    }, err => console.log(err.message))
+    }, err => console.log('Orderbook phase err', err.message))
 }
