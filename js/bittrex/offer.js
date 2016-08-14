@@ -1,3 +1,3 @@
 function(offer){
-  return [offer['Rate'], offer['Quantity']]
+  return [""+offer['Rate'], offer['Quantity']]
 }
