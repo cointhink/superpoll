@@ -4,7 +4,6 @@ function(body) {
         var pair = name.split('_')
         var base = pair[1]
         var quote = pair[0]
-        if(quote === 'USDT') { quote = 'USD' }
         return {
             market: {
                 base: base,
