@@ -27,27 +27,26 @@ function gopoll(){
       return cursor
              .toArray()
              .then(function(array){
+               console.log('** Marketlist queries')
                return array
                       .map(function(exchange){
-                         console.log('* Start', exchange.id)
                          return poll.marketlist(exchange)
                        })
              })
     })
     .then(function(exchangeMarketInquiries){
-      console.log('Marketlist phase')
       return Promise.all(exchangeMarketInquiries)
     })
     .then(function(exchanges){
-      console.log('Orderbook phase')
-      return Promise.all(exchanges.filter(x=>x)
+      console.log('** Orderbook queries')
+      return Promise.all(exchanges.filter(x => x)
              .map(function(exchange){
-               let obpeek= exchange
-                      .orderbooks
-                      .map(function(orderbook){
-                        console.log('poll', orderbook.exchange, orderbook.market)
-                        return poll.poll(exchange, orderbook)
-                      })
+               let obpeek = exchange
+                              .orderbooks
+                              .map(function(orderbook){
+                                console.log('poll', orderbook.exchange, orderbook.market)
+                                return poll.poll(exchange, orderbook)
+                              })
                return Promise.all(obpeek)
              }))
     }, err => console.log('Marketlist phase err', err.message))
@@ -57,8 +56,7 @@ function gopoll(){
         function(orderbooks){
           return orderbooks.filter(x=>x).map(
             function(orderbook){
-              console.log(
-                          orderbook.exchange,
+              console.log(orderbook.exchange,
                           orderbook.market,
                           'orderbook head',
                           orderbook.asks[0],
