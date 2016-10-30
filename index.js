@@ -13,13 +13,11 @@ var poll = require('./lib/superpoll.js')
 var hjson = fs.readFileSync('./config.hjson', {encoding: 'utf8'})
 var config = Hjson.parse(hjson)
 
-var delay = 60 // seconds between poll
-
 poll
   .setup(config)
   .then(function(){
     gopoll()
-    setInterval(gopoll, delay * 1000)
+    setInterval(gopoll, config.system.poll_seconds * 1000)
   })
 
 function gopoll(){
