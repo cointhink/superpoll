@@ -79,21 +79,24 @@ function gopoll(){
               cursor
               .toArray()
               .then(function(books) {
-                // inefficient but...
-                let partialBooks = books.filter(function(book){ return book.exchange == market.exchange })
+                // .last retrives all exchanges, too much info.
+                let partialBooks = books.filter(book => book.exchange == market.exchange )
+                // need t0 and t1 to compute difference
                 if(partialBooks.length >= 2) {
-                  partialBooks
-                    .forEach(function(book){
-                      let delay = (market.date-book.date)/1000
-                      console.log('fetch ', book.exchange, book.market.base, book.market.quote,
-                                  delay.toFixed(2)+'s')
-                    })
-                  let askChg = parseFloat(partialBooks[0].asks[0][0]) -
-                               parseFloat(partialBooks[1].asks[0][0])
-                  let bidChg = parseFloat(partialBooks[0].bids[0][0]) -
-                               parseFloat(partialBooks[1].bids[0][0])
-                  console.log('diff', market.exchange, market.market.base, market.market.quote,
-                              'askChg', askChg, 'bidChg', bidChg)
+                  if(partialBooks[0].asks.length > 0 &&
+                     partialBooks[0].bids.length > 0 &&
+                     partialBooks[1].asks.length > 0 &&
+                     partialBooks[1].bids.length > 0) {
+                    let askChg = parseFloat(partialBooks[0].asks[0][0]) -
+                                 parseFloat(partialBooks[1].asks[0][0])
+                    let bidChg = parseFloat(partialBooks[0].bids[0][0]) -
+                                 parseFloat(partialBooks[1].bids[0][0])
+                    let delay = (partialBooks[0].date - partialBooks[1].date)/1000
+                    console.log('diff', market.exchange, market.market.base, market.market.quote,
+                                'delay', delay+'s', 'askChg', askChg.toFixed(4), 'bidChg', bidChg.toFixed(4))
+                  } else {
+                    console.log('missing book data in', market.exchange, market.market.base, market.market.quote)
+                  }
                 } else {
                   console.log('no previous timeslot for', market.exchange, market.market.base, market.market.quote)
                 }
