@@ -71,18 +71,19 @@ function gopoll(){
       orderbooks.forEach( exchange => {
         exchange.forEach( market => {
           console.log('** nexto', market.date, market.exchange, market.market)
-          let ago = config.system.poll_seconds * 1000
+          let slotLength = config.system.poll_seconds * 1000
+          let slots = 2
           let now = new Date()
           poll
-            .last(market.market.base, market.market.quote, now, ago)
+            .last(market.market.base, market.market.quote, now, slotLength * slots)
             .then(function(cursor){
               cursor
               .toArray()
               .then(function(books) {
                 // .last retrives all exchanges, too much info.
-                let partialBooks = books.filter(book => book.exchange == market.exchange )
-                // need t0 and t1 to compute difference
-                if(partialBooks.length >= 2) {
+                let partialBooks = books.filter(book => book.exchange == market.exchange)
+                // todo: compute summary chg for whole array
+                if(partialBooks.length >= slots) {
                   if(partialBooks[0].asks.length > 0 &&
                      partialBooks[0].bids.length > 0 &&
                      partialBooks[1].asks.length > 0 &&
