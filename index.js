@@ -18,7 +18,7 @@ poll
   .then(function(){
     gopoll()
     setInterval(gopoll, config.system.poll_seconds * 1000)
-  })
+  }).catch(e => console.log(e.stack))
 
 function gopoll(){
   poll
