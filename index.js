@@ -80,10 +80,10 @@ function gopoll(){
               cursor
               .toArray()
               .then(function(books) {
-                // .last retrives all exchanges, too much info.
+                // books contains all exchanges, too much info.
                 let partialBooks = books.filter(book => book.exchange == market.exchange)
-                // todo: compute summary chg for whole array
                 if(partialBooks.length >= slots) {
+                  // todo: compute summary chg for whole array
                   if(partialBooks[0].asks.length > 0 &&
                      partialBooks[0].bids.length > 0 &&
                      partialBooks[1].asks.length > 0 &&
