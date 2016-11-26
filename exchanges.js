@@ -13,34 +13,32 @@ var poll = require('./lib/superpoll.js')
 var hjson = fs.readFileSync('./config.hjson', {encoding: 'utf8'})
 var config = Hjson.parse(hjson)
 
-let db = poll.setup(config)
-
-if (process.argv.length == 2) {
-  db
-  .then(poll.exchanges)
-  .then(function(exchanges){
-    console.log('Exchange list')
-    exchanges.forEach(function(exchange){
-      console.log(JSON.stringify(exchange, null ,2))
-    })
-  })
-  .catch(e => console.log('err', e.stack))
-} else {
-  fs.readdirSync('js').forEach(
-    function(dirName) {
-      ['markets', 'offer', 'orderbook'].forEach(
-        function(section) {
-          let jsName = 'js/'+dirName+'/'+section+'.js'
-          console.log('loading', jsName)
-          db
-          .then(function(conn){
-            return poll.jsput(
-              dirName,
-              section,
-              fs.readFileSync(jsName, {encoding: 'utf8'})
-            )
-          }, x => console.log(x))
-          .catch(e => console.log('err', e.stack))
+poll.setup(config)
+  .then(() => {
+    if (process.argv.length == 2) {
+      return poll.exchanges()
+        .then(function(exchanges){
+          console.log('Exchange list')
+          exchanges.forEach(function(exchange){
+            console.log(JSON.stringify(exchange, null ,2))
+          })
         })
-    })
+    } else {
+      let updates = fs.readdirSync('js').map(marketPush)
+      return Promise.all(updates)
+    }
+  })
+  .then(poll.stop)
+  .catch(e => console.log('err', e.stack))
+
+function marketPush(dirName) {
+  return Promise.all(['markets', 'offer', 'orderbook'].map(
+    function(section) {
+      let jsName = 'js/'+dirName+'/'+section+'.js'
+      console.log('loading', jsName)
+      return poll.jsput(
+        dirName,
+        section,
+        fs.readFileSync(jsName, {encoding: 'utf8'}))
+    }))
 }
