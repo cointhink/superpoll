@@ -26,7 +26,7 @@ function gopoll(){
   poll
     .exchanges()
     .then(function(exchanges){
-       console.log('** Marketlist queries', exchanges)
+       console.log('** Marketlist queries')
        return exchanges.map(poll.marketlist)
     })
     .then(function(exchangeMarketInquiries){

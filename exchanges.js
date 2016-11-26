@@ -32,13 +32,15 @@ poll.setup(config)
   .catch(e => console.log('err', e.stack))
 
 function marketPush(dirName) {
-  return Promise.all(['markets', 'offer', 'orderbook'].map(
+  return Promise.all(['markets.url', 'markets.js', 'offer.js', 'orderbook.js'].map(
     function(section) {
-      let jsName = 'js/'+dirName+'/'+section+'.js'
-      console.log('loading', jsName)
+      let jsName = 'js/'+dirName+'/'+section
+      let dotPos = section.indexOf('.')
+      let extLetter = section.substr(dotPos+1,1)
+      let column = section.substr(0, dotPos) + extLetter.toUpperCase() + section.substr(dotPos+2, section.length)
       return poll.jsput(
         dirName,
-        section,
+        column,
         fs.readFileSync(jsName, {encoding: 'utf8'}))
     }))
 }
