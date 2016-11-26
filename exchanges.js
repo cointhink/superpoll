@@ -18,11 +18,13 @@ let db = poll.setup(config)
 if (process.argv.length == 2) {
   db
   .then(poll.exchanges)
-  .then(function(cursor){
-    cursor.each(function(err, exchange){
+  .then(function(exchanges){
+    console.log('Exchange list')
+    exchanges.forEach(function(exchange){
       console.log(JSON.stringify(exchange, null ,2))
     })
   })
+  .catch(e => console.log('err', e.stack))
 } else {
   fs.readdirSync('js').forEach(
     function(dirName) {
@@ -38,6 +40,7 @@ if (process.argv.length == 2) {
               fs.readFileSync(jsName, {encoding: 'utf8'})
             )
           }, x => console.log(x))
+          .catch(e => console.log('err', e.stack))
         })
     })
 }

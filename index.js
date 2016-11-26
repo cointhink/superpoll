@@ -25,16 +25,9 @@ poll
 function gopoll(){
   poll
     .exchanges()
-    .then(function(cursor){
-      return cursor
-             .toArray()
-             .then(function(array){
-               console.log('** Marketlist queries')
-               return array
-                      .map(function(exchange){
-                         return poll.marketlist(exchange)
-                       })
-             })
+    .then(function(exchanges){
+       console.log('** Marketlist queries', exchanges)
+       return exchanges.map(poll.marketlist)
     })
     .then(function(exchangeMarketInquiries){
       return Promise.all(exchangeMarketInquiries)
