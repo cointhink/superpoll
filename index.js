@@ -57,8 +57,9 @@ function gopoll(){
                           orderbook.asks[0],
                           'top bid',
                           orderbook.bids[0])
-              poll.insert(orderbook)
-              return orderbook
+
+              return poll.insert(orderbook)
+                .then(orderbook => orderbook, e => console.log('insert err',e))
             })
       })
     }, err => console.log('Orderbook phase err', err.message))
