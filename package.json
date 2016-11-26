@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "rethinkdb": "latest",
     "hjson": "latest",
+    "pg-promise": "^5.4.3",
     "request-promise": "latest"
   }
 }
