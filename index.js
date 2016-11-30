@@ -37,7 +37,7 @@ function gopoll(){
       return Promise.all(exchanges.filter(x => x)
              .map(function(exchange){
                let obpeek = exchange
-                              .orderbooks
+                              .orderbooks //.slice(0,2)
                               .map(function(orderbook){
                                 console.log('poll', orderbook.exchange, orderbook.market)
                                 return poll.poll(exchange, orderbook)
@@ -64,6 +64,7 @@ function gopoll(){
       })
     }, err => console.log('Orderbook phase err', err.message))
     .then( orderbooks => {
+      console.log('step3')
       orderbooks.forEach( exchange => {
         exchange.forEach( market => {
           console.log('** nexto', market.date, market.exchange, market.market)
