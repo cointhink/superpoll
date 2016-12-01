@@ -4,7 +4,8 @@
 var fs = require('fs')
 
 // npm
-var Hjson = require('hjson');
+var Hjson = require('hjson')
+var Promise = require('bluebird')
 
 // local
 var poll = require('./lib/superpoll.js')
@@ -37,7 +38,7 @@ function gopoll(){
       return Promise.all(exchanges.filter(x => x)
              .map(function(exchange){
                let obpeek = exchange
-                              .orderbooks //.slice(0,2)
+                              .orderbooks.slice(0,1)
                               .map(function(orderbook){
                                 console.log('poll', orderbook.exchange, orderbook.market)
                                 return poll.poll(exchange, orderbook)
@@ -46,8 +47,7 @@ function gopoll(){
              }))
     }, err => console.log('Marketlist phase err', err.message))
     .then(function(exchanges){
-      console.log('Final phase')
-      return exchanges.map(
+      return Promise.all(exchanges.map(
         function(orderbooks){
           return orderbooks.filter(x=>x).map(
             function(orderbook){
@@ -61,47 +61,38 @@ function gopoll(){
               return poll.insert(orderbook)
                 .then(orderbook => orderbook, e => console.log('insert err',e))
             })
-      })
+      }).reduce(function(a, b) {return a.concat(b)}))
     }, err => console.log('Orderbook phase err', err.message))
     .then( orderbooks => {
-      console.log('step3')
-      orderbooks.forEach( exchange => {
-        exchange.forEach( market => {
-          console.log('** nexto', market.date, market.exchange, market.market)
-          let slotLength = config.system.poll_seconds * 1000
-          let slots = 2
-          let now = new Date()
-          poll
-            .last(market.market.base, market.market.quote, now, slotLength * slots)
-            .then(function(cursor){
-              cursor
-              .toArray()
-              .then(function(books) {
-                // books contains all exchanges, too much info.
-                let partialBooks = books.filter(book => book.exchange == market.exchange)
-                if(partialBooks.length >= slots) {
-                  // todo: compute summary chg for whole array
-                  if(partialBooks[0].asks.length > 0 &&
-                     partialBooks[0].bids.length > 0 &&
-                     partialBooks[1].asks.length > 0 &&
-                     partialBooks[1].bids.length > 0) {
-                    let askChg = parseFloat(partialBooks[0].asks[0][0]) -
-                                 parseFloat(partialBooks[1].asks[0][0])
-                    let bidChg = parseFloat(partialBooks[0].bids[0][0]) -
-                                 parseFloat(partialBooks[1].bids[0][0])
-                    let delay = (partialBooks[0].date - partialBooks[1].date)/1000
-                    console.log('diff', market.exchange, market.market.base, market.market.quote,
-                                'delay', delay+'s', 'askChg', askChg.toFixed(4), 'bidChg', bidChg.toFixed(4))
-                  } else {
-                    console.log('missing book data in', market.exchange, market.market.base, market.market.quote)
-                  }
-                } else {
-                  console.log('no previous timeslot for', market.exchange, market.market.base, market.market.quote)
-                }
-              })
-            })
-
-        })
-      })
+      return Promise.all(orderbooks.map(market => {
+        console.log('** nexto', market.date, market.exchange, market.market)
+        let slotLength = config.system.poll_seconds * 1000
+        let slots = 2
+        let now = new Date()
+        return poll
+          .last(market, now, slotLength * slots)
+          .then(function(books) {
+            if(books.length >= slots) {
+              // todo: compute summary chg for whole array
+              if(books[0].asks.length > 0 &&
+                 books[0].bids.length > 0 &&
+                 books[1].asks.length > 0 &&
+                 books[1].bids.length > 0) {
+                let askChg = parseFloat(books[0].asks[0][0]) -
+                             parseFloat(books[1].asks[0][0])
+                let bidChg = parseFloat(books[0].bids[0][0]) -
+                             parseFloat(books[1].bids[0][0])
+                let delay = (books[0].date - books[1].date)/1000
+                console.log('diff', market.exchange, market.market.base, market.market.quote,
+                            'delay', delay+'s', 'askChg', askChg.toFixed(4), 'bidChg', bidChg.toFixed(4))
+              } else {
+                console.log('missing book data in', market.exchange, market.market.base, market.market.quote)
+              }
+            } else {
+              console.log(books.length, 'of', slots, 'timeslots for', market.exchange, market.market.base, market.market.quote)
+            }
+          })
+      }))
     })
+  .catch(e => console.log('gopoll', e.stack))
 }
