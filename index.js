@@ -38,9 +38,8 @@ function gopoll(){
       return Promise.all(exchanges.filter(x => x)
              .map(function(exchange){
                let obpeek = exchange
-                              .orderbooks.slice(0,1)
+                              .orderbooks
                               .map(function(orderbook){
-                                console.log('poll', orderbook.exchange, orderbook.market)
                                 return poll.poll(exchange, orderbook)
                               })
                return Promise.all(obpeek)
