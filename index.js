@@ -46,21 +46,18 @@ function gopoll(){
              }))
     }, err => console.log('Marketlist phase err', err.message))
     .then(function(exchanges){
-      return Promise.all(exchanges.map(
-        function(orderbooks){
-          return orderbooks.filter(x=>x).map(
-            function(orderbook){
-              console.log(orderbook.exchange,
-                          orderbook.market,
-                          'top ask',
-                          orderbook.asks[0],
-                          'top bid',
-                          orderbook.bids[0])
+      let orderbooks = exchanges.reduce(function(a, b) {console.log(a); return a.concat(b)}).filter(x=>x)
+      return Promise.all(orderbooks.map(orderbook => {
+        console.log(orderbook.exchange,
+                    orderbook.market,
+                    'top ask',
+                    orderbook.asks[0],
+                    'top bid',
+                    orderbook.bids[0])
 
-              return poll.insert(orderbook)
-                .then(orderbook => orderbook, e => console.log('insert err',e))
-            })
-      }).reduce(function(a, b) {return a.concat(b)}))
+        return poll.insert(orderbook)
+          .then(orderbook => orderbook, e => console.log('insert err',e))
+      }))
     }, err => console.log('Orderbook phase err', err.message))
     .then( orderbooks => {
       return Promise.all(orderbooks.map(market => {
