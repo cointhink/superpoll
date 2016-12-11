@@ -46,9 +46,9 @@ function gopoll(){
              }))
     }, err => console.log('Marketlist phase err', err.message))
     .then(function(exchanges){
-      let orderbooks = exchanges.reduce(function(a, b) {console.log(a); return a.concat(b)}).filter(x=>x)
+      let orderbooks = exchanges.reduce(function(a, b) {return a.concat(b)}).filter(x=>x)
       return Promise.all(orderbooks.map(orderbook => {
-        console.log(orderbook.exchange,
+        console.log(orderbook.exchange, orderbook.date.toISOString(),
                     orderbook.market,
                     'top ask',
                     orderbook.asks[0],
@@ -59,7 +59,11 @@ function gopoll(){
           .then(orderbook => orderbook, e => console.log('insert err',e))
       }))
     }, err => console.log('Orderbook phase err', err.message))
-    .then( orderbooks => {
+    //.then(timediff)
+  .catch(e => console.log('gopoll', e.stack))
+}
+
+function timediff(orderbooks) {
       return Promise.all(orderbooks.map(market => {
         console.log('** nexto', market.date, market.exchange, market.market)
         let slotLength = config.system.poll_seconds * 1000
@@ -89,6 +93,4 @@ function gopoll(){
             }
           })
       }))
-    })
-  .catch(e => console.log('gopoll', e.stack))
 }
