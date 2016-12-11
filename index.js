@@ -17,6 +17,7 @@ var config = Hjson.parse(hjson)
 poll
   .setup(config)
   .then(function(){
+    console.log('poll started at', config.system.poll_seconds, 'seconds')
     gopoll()
     setInterval(gopoll, config.system.poll_seconds * 1000)
   })
@@ -27,16 +28,16 @@ function gopoll(){
   poll
     .exchanges()
     .then(function(exchanges){
-       console.log('** Marketlist queries')
-       return exchanges.map(poll.marketlist)
+      console.log('** ', exchanges.length, 'exchanges polling for marketlist')
+      return exchanges.map(poll.marketlist)
     })
     .then(function(exchangeMarketInquiries){
       return Promise.all(exchangeMarketInquiries)
     })
     .then(function(exchanges){
-      console.log('** Orderbook queries')
       return Promise.all(exchanges.filter(x => x)
              .map(function(exchange){
+               console.log(exchange.id, exchange.orderbooks.length, 'orderbook polls')
                let obpeek = exchange
                               .orderbooks
                               .map(function(orderbook){
@@ -47,13 +48,14 @@ function gopoll(){
     }, err => console.log('Marketlist phase err', err.message))
     .then(function(exchanges){
       let orderbooks = exchanges.reduce(function(a, b) {return a.concat(b)}).filter(x=>x)
+      console.log(orderbooks.length, 'orderbook inserts')
       return Promise.all(orderbooks.map(orderbook => {
-        console.log(orderbook.exchange, orderbook.date.toISOString(),
-                    orderbook.market,
-                    'top ask',
-                    orderbook.asks[0],
-                    'top bid',
-                    orderbook.bids[0])
+        //console.log(orderbook.exchange, orderbook.date.toISOString(),
+        //            orderbook.market,
+        //            'top ask',
+        //            orderbook.asks[0],
+        //            'top bid',
+        //            orderbook.bids[0])
 
         return poll.insert(orderbook)
           .then(orderbook => orderbook, e => console.log('insert err',e))
