@@ -18,14 +18,16 @@ poll
   .setup(config)
   .then(function(){
     console.log('poll started at', config.system.poll_seconds, 'seconds')
-    gopoll()
-    setInterval(gopoll, config.system.poll_seconds * 1000)
+    function loop() {
+      return Promise.resolve(gopoll()).then(loop)
+    }
+    return Promise.resolve().then(loop)
   })
   .then(poll.stop)
   .catch(e => console.log('err',e))
 
 function gopoll(){
-  poll
+  return poll
     .exchanges()
     .then(function(exchanges){
       console.log('** ', exchanges.length, 'exchanges polling for marketlist')
@@ -47,7 +49,7 @@ function gopoll(){
              }))
     }, err => console.log('Marketlist phase err', err.message))
     .then(function(exchanges){
-      let orderbooks = exchanges.reduce(function(a, b) {return a.concat(b)}).filter(x=>x)
+      let orderbooks = exchanges.reduce(function(a, b) {return a.concat(b)}, []).filter(x=>x)
       console.log(orderbooks.length, 'orderbook inserts')
       return Promise.all(orderbooks.map(orderbook => {
         //console.log(orderbook.exchange, orderbook.date.toISOString(),
